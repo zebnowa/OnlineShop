@@ -1,0 +1,82 @@
+﻿@model AllShopQueryModel
+
+@{
+    ViewData["Title"] = "Online Shop";
+}
+
+<form method="get">
+    <div class="row">
+        <div class="form-group col-md-4">
+            <div class="form-group">
+                <label asp-for="Modell"></label>
+                <select asp-for="Modell" class="form-control">
+                    <option value="">All</option>
+                    @foreach (var modell in Model.Models)
+                    {
+                        <option value="@modell">@modell</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group col-md-4">
+            <label asp-for="SearchTerm"></label>
+            <input asp-for="SearchTerm" class="form-control" placeholder="Cloths, etc .. ">
+        </div>
+
+    </div>
+</form>
+
+@*сортирането от н7 от 1;38*@
+
+@{
+    var previousPage = Model.CurrentPage - 1;
+    if (previousPage < 1)
+    {
+        previousPage = 1;
+    }
+
+    var maxPages = Math.Ceiling((double)Model.TotalProducts / AllShopQueryModel.ProductsPerPage);
+}
+
+<div class="row mb-5">
+    <div class="col-md-6">
+        <a class="btn btn-primary @(Model.CurrentPage == 1 ? "disabled" : string.Empty)"
+           asp-controller="Shop"
+           asp-action="All"
+           asp-route-currentPage="@(previousPage)"
+           asp-route-model="@Model.Modell"
+           asp-route-searchTerm="@Model.SearchTerm"
+           asp-route-sorting="@((int)Model.Sorting)"><<</a>
+    </div>
+
+    <div class="col-md-6">
+        <a class="btn btn-primary float-right @(Model.CurrentPage == maxPages ? "disabled" : string.Empty)"
+           asp-controller="Shop"
+           asp-action="All"
+           asp-route-currentPage="@(Model.CurrentPage + 1)"
+           asp-route-model="@Model.Modell"
+           asp-route-searchTerm="@Model.SearchTerm"
+           asp-route-sorting="@((int)Model.Sorting)">>></a>
+    </div>
+</div>
+
+@if (!Model.Models.Any())
+{
+    <h2 class="text-center">No products found by the given criteria!</h2>
+}
+<div class="row">
+    @foreach (var shop in Model.Products)
+    {
+        <div class="col-md-2">
+            <div class="card mb-3">
+                <img class="card-img-top" src="@shop.ImageUrl" alt="@shop.Model">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-center">@shop.Model</h5>
+                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@shop.Id" class"btn btn-primary">View More</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
