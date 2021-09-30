@@ -1,2 +1,2 @@
-# OnlineShop---third-try
+# OnlineShop
 My first repository.
